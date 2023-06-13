@@ -14,6 +14,9 @@ def signin_page(request):
 def profile_page(request):
     return render(request,'profile_page.html')
 
+def update_profile_page(request):
+    return render(request,'update_profile_page.html')
+
 
 #signup_functionality
 def signup(request):
@@ -62,11 +65,11 @@ def profile_page(request):
                 profile_data(request)
                 return render(request,'profile_page.html',data)
             except:
-                profile_data(request)
-                return redirect(index)
+                update_profile_function(request)
+                return redirect(update_profile_page)
         except Exception as err:
             print("data not availabe ! submit your data admin side & relogin")
-    return redirect(index)
+    return redirect(update_profile_page)
 
 
 # load profile data
@@ -89,7 +92,7 @@ def profile_data(request):
 main_path = settings.MEDIA_ROOT
 
 
-# profile update functionality student
+# profile update functionality
 def profile_update(request):
     print(request.POST)
     master = Master.objects.get(Email = request.session['email'])
@@ -106,6 +109,20 @@ def profile_update(request):
 
     user_profile.save()
 
+    return redirect(profile_page)
+
+
+def update_profile_function(request):
+    print(request.POST)
+    master = Master.objects.get(Email = request.session['email'])
+    common= Common.objects.get(Master = master)
+
+    common.Name = ' '.join([request.POST['first_name'], request.POST['last_name']])
+    common.DateOfBirth = request.POST['dateofbirth']
+    common.DateOfJoining = request.POST['dateofjoining']
+    common.Address = request.POST['address']
+
+    common.save()
     return redirect(profile_page)
 
 
